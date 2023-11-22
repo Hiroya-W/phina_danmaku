@@ -18,7 +18,7 @@ let ASSETS = {
     enemy:
       "https://raw.githubusercontent.com/phinajs/phina.js/develop/assets/images/shooting/enemy.png",
     bullet:
-      "https://raw.githubusercontent.com/Hiroya-W/phina.js/assets/assets/images/shooting/enemy_bullet2.png",
+      "https://raw.githubusercontent.com/Hiroya-W/phina.js/assets/assets/images/shooting/bullets.png",
   },
 };
 
@@ -134,7 +134,8 @@ phina.define("Bullet", {
   superClass: "Sprite",
   // angle(0.0: right, 0.25: down, 0.5: left, 0.75: up, 1.0: right)
   init: function (x, y, angle, angleRate, speed, speedRate) {
-    this.superInit("bullet");
+    this.superInit("bullet", 32);
+    this.frameIndex = 0;
 
     this.setPosition(x, y);
     this.rotation = angle;
