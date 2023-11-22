@@ -188,13 +188,13 @@ phina.define("MultipleSpiralShooter", {
     for (let i = 0; i < this.shotCount; i++) {
       Bullet(
         0,
-        0,
-        0,
+        this.x,
+        this.y,
         this.shotAngle + i / this.shotCount,
         0,
         this.shotSpeed,
         0
-      ).addChildTo(this);
+      ).addChildTo(this.parent);
     }
     this.shotAngle += this.shotAngleRate;
     // 0~1に収める
@@ -204,17 +204,17 @@ phina.define("MultipleSpiralShooter", {
 
 phina.define("IntervalMultipleSpiralShooter", {
   superClass: "Enemy",
-  init: function (angle, angle_rate, speed, count, interval) {
+  init: function (angle, angleRate, speed, count, interval) {
     this.superInit();
 
     // 発射角度
-    this.shot_angle = angle;
+    this.shotAngle = angle;
     // 発射角速度
-    this.shot_angle_rate = angle_rate;
+    this.shotAngleRate = angleRate;
     // 発射速度
-    this.shot_speed = speed;
+    this.shotSpeed = speed;
     // 発射数
-    this.shot_count = count;
+    this.shotCount = count;
     // 発射間隔
     this.interval = interval;
     this.time = 0;
@@ -222,19 +222,20 @@ phina.define("IntervalMultipleSpiralShooter", {
 
   update: function (app) {
     if (this.time == 0) {
-      for (let i = 0; i < this.shot_count; i++) {
+      for (let i = 0; i < this.shotCount; i++) {
         Bullet(
           0,
+          this.x,
+          this.y,
+          this.shotAngle + i / this.shotCount,
           0,
-          this.shot_angle + i / this.shot_count,
-          0,
-          this.shot_speed,
+          this.shotSpeed,
           0
-        ).addChildTo(this);
+        ).addChildTo(this.parent);
       }
-      this.shot_angle += this.shot_angle_rate;
+      this.shotAngle += this.shotAngleRate;
       // 0~1に収める
-      this.shot_angle -= Math.floor(this.shot_angle);
+      this.shotAngle -= Math.floor(this.shotAngle);
     }
     this.time = (this.time + 1) % this.interval;
   },
