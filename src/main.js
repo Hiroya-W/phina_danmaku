@@ -41,7 +41,18 @@ phina.define("MainScene", {
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
-    this.enemy = IntervalMultipleSpiralShooter(0, 0.03, 10, 4, 7)
+    // 簡単
+    // this.enemy = BiDirectionalSpiralShooter(0, [0.03, -0.03], 10, 4, 7)
+    //   .addChildTo(this)
+    //   .setPosition(this.gridX.center(), this.gridY.span(3))
+    //   .setScale(0.7, 0.7);
+    // 角速度を変えるとちょっと変わって面白い
+    // this.enemy = BiDirectionalSpiralShooter(0, [0.03, -0.02], 10, 4, 7)
+    //   .addChildTo(this)
+    //   .setPosition(this.gridX.center(), this.gridY.span(3))
+    //   .setScale(0.7, 0.7);
+
+    this.enemy = BiDirectionalSpiralShooter(0, [0.015, -0.01], 7, 4, 7)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
@@ -169,46 +180,13 @@ phina.define("Bullet", {
   },
 });
 
-phina.define("MultipleSpiralShooter", {
-  superClass: "Enemy",
-  init: function (angle, angleRate, speed, count) {
-    this.superInit();
-
-    // 発射角度
-    this.shotAngle = angle;
-    // 発射角速度
-    this.shotAngleRate = angleRate;
-    // 発射速度
-    this.shotSpeed = speed;
-    // 発射数
-    this.shotCount = count;
-  },
-
-  update: function (app) {
-    for (let i = 0; i < this.shotCount; i++) {
-      Bullet(
-        0,
-        this.x,
-        this.y,
-        this.shotAngle + i / this.shotCount,
-        0,
-        this.shotSpeed,
-        0
-      ).addChildTo(this.parent);
-    }
-    this.shotAngle += this.shotAngleRate;
-    // 0~1に収める
-    this.shotAngle -= Math.floor(this.shotAngle);
-  },
-});
-
-phina.define("IntervalMultipleSpiralShooter", {
+phina.define("BiDirectionalSpiralShooter", {
   superClass: "Enemy",
   init: function (angle, angleRate, speed, count, interval) {
     this.superInit();
 
     // 発射角度
-    this.shotAngle = angle;
+    this.shotAngle = [angle, angle];
     // 発射角速度
     this.shotAngleRate = angleRate;
     // 発射速度
@@ -222,20 +200,22 @@ phina.define("IntervalMultipleSpiralShooter", {
 
   update: function (app) {
     if (this.time == 0) {
-      for (let i = 0; i < this.shotCount; i++) {
-        Bullet(
-          0,
-          this.x,
-          this.y,
-          this.shotAngle + i / this.shotCount,
-          0,
-          this.shotSpeed,
-          0
-        ).addChildTo(this.parent);
+      for (let j = 0; j < 2; j++) {
+        for (let i = 0; i < this.shotCount; i++) {
+          Bullet(
+            0,
+            this.x,
+            this.y,
+            this.shotAngle[j] + i / this.shotCount,
+            0,
+            this.shotSpeed,
+            0
+          ).addChildTo(this.parent);
+        }
+        this.shotAngle[j] += this.shotAngleRate[j];
+        // 0~1に収める
+        this.shotAngle[j] -= Math.floor(this.shotAngle[j]);
       }
-      this.shotAngle += this.shotAngleRate;
-      // 0~1に収める
-      this.shotAngle -= Math.floor(this.shotAngle);
     }
     this.time = (this.time + 1) % this.interval;
   },
