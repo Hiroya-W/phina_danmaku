@@ -1,8 +1,13 @@
 phina.globalize();
 
-let SCREEN_X = 640;
-let SCREEN_Y = 960;
-let PLAYER_SPEED = 10;
+let SCREEN_PROPS = {
+  width: 640,
+  height: 960,
+};
+let PLAYER_PROPS = {
+  speed: 10,
+  hitboxRadius: 7,
+};
 
 let ASSETS = {
   image: {
@@ -48,6 +53,12 @@ phina.define("Player", {
   init: function () {
     this.superInit("player", 64, 64);
     this.frameIndex = 0;
+
+    this.coreShape = CircleShape({
+      radius: PLAYER_PROPS.hitboxRadius,
+      fill: "blue",
+    }).addChildTo(this);
+
     this.invisible = false;
     // ダメージを受けた時、一時的に当たり判定をなくす
     this.damage = function () {
@@ -71,7 +82,9 @@ phina.define("Player", {
       y: this.y,
     };
 
-    var SPEED = key.getKey("shift") ? PLAYER_SPEED / 2 : PLAYER_SPEED;
+    let SPEED = key.getKey("shift")
+      ? PLAYER_PROPS.speed / 2
+      : PLAYER_PROPS.speed;
 
     // 上下
     if (key.getKey("up")) {
@@ -94,16 +107,16 @@ phina.define("Player", {
     }
 
     // はみ出し
-    if (this.x < 0 || SCREEN_X < this.x) {
+    if (this.x < 0 || SCREEN_PROPS.width < this.x) {
       this.x = current.x;
     }
-    if (this.y < 0 || SCREEN_Y < this.y) {
+    if (this.y < 0 || SCREEN_PROPS.height < this.y) {
       this.y = current.y;
     }
 
     // ダメージを受けた時の点滅
     if (this.invisible) {
-      this.alpha = (this.alpha === 0) ? 1 : 0;
+      this.alpha = this.alpha === 0 ? 1 : 0;
     } else {
       this.alpha = 1;
     }
@@ -137,7 +150,9 @@ phina.define("Bullet", {
     this.rotation += this.angleRate;
     this.speed += this.speedRate;
 
-    if (!player.invisible && Collision.testCircleCircle(player, this)) {
+    // プレイヤーの位置に円の判定を配置して、弾と当たっているかを判定する
+    let circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
+    if (!player.invisible && Collision.testCircleCircle(circle, this)) {
       player.damage();
       this.remove();
     }
@@ -168,8 +183,8 @@ phina.define("DirectionalShooter", {
 phina.main(function () {
   var app = GameApp({
     startLabel: "main",
-    width: SCREEN_X,
-    height: SCREEN_Y,
+    width: SCREEN_PROPS.width,
+    height: SCREEN_PROPS.height,
     assets: ASSETS,
   });
 
