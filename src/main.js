@@ -157,6 +157,14 @@ phina.define("Bullet", {
       player.damage();
       this.remove();
     }
+
+    // 画面外に出たら削除
+    if (this.x + 16 < 0 || SCREEN_PROPS.width + 16 < this.x) {
+      this.remove();
+    }
+    if (this.y + 16 < 0 || SCREEN_PROPS.height + 16 < this.y) {
+      this.remove();
+    }
   },
 });
 
