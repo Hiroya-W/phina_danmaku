@@ -3,6 +3,7 @@ phina.globalize();
 let SCREEN_PROPS = {
   width: 640,
   height: 960,
+  fps: 60,
 };
 let PLAYER_PROPS = {
   speed: 10,
@@ -38,11 +39,11 @@ phina.define("MainScene", {
 
     player = Player()
       .addChildTo(this)
-      .setPosition(this.gridX.center(), this.gridY.span(15))
+      .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
-    this.enemy = DirectionalShooter(0.25, 20)
+    this.enemy = SpiralShooter(0, 0.03, 10)
       .addChildTo(this)
-      .setPosition(this.gridX.center(), this.gridY.span(1))
+      .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
   },
 });
@@ -168,13 +169,15 @@ phina.define("Bullet", {
   },
 });
 
-phina.define("DirectionalShooter", {
+phina.define("SpiralShooter", {
   superClass: "Enemy",
-  init: function (angle, speed) {
+  init: function (angle, angleRate, speed) {
     this.superInit();
 
     // 発射角度
     this.shotAngle = angle;
+    // 発射角速度
+    this.shotAngleRate = angleRate;
     // 発射速度
     this.shotSpeed = speed;
   },
@@ -183,6 +186,9 @@ phina.define("DirectionalShooter", {
     Bullet(0, this.x, this.y, this.shotAngle, 0, this.shotSpeed, 0).addChildTo(
       this.parent
     );
+    this.shotAngle += this.shotAngleRate;
+    // 0~1に収める
+    this.shotAngle -= Math.floor(this.shotAngle);
   },
 });
 
@@ -194,6 +200,7 @@ phina.main(function () {
     startLabel: "main",
     width: SCREEN_PROPS.width,
     height: SCREEN_PROPS.height,
+    fps: SCREEN_PROPS.fps,
     assets: ASSETS,
   });
 
