@@ -17,6 +17,8 @@ let ASSETS = {
   },
 };
 
+var player;
+
 /*
  * メインシーン
  */
@@ -29,7 +31,7 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.center())
       .setScale(2, 2);
 
-    this.player = Player()
+    player = Player()
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(15))
       .setScale(0.7, 0.7);
@@ -46,6 +48,19 @@ phina.define("Player", {
   init: function () {
     this.superInit("player", 64, 64);
     this.frameIndex = 0;
+    this.invisible = false;
+    // ダメージを受けた時、一時的に当たり判定をなくす
+    this.damage = function () {
+      this.invisible = true;
+      this.tweener
+        .clear()
+        .wait(1000)
+        .call(
+          function () {
+            this.invisible = false;
+          }.bind(this)
+        );
+    };
   },
 
   update: function (app) {
@@ -85,6 +100,13 @@ phina.define("Player", {
     if (this.y < 0 || SCREEN_Y < this.y) {
       this.y = current.y;
     }
+
+    // ダメージを受けた時の点滅
+    if (this.invisible) {
+      this.alpha = (this.alpha === 0) ? 1 : 0;
+    } else {
+      this.alpha = 1;
+    }
   },
 });
 
@@ -114,6 +136,11 @@ phina.define("Bullet", {
     this.y += this.speed * Math.sin(rad);
     this.rotation += this.angle_rate;
     this.speed += this.speed_rate;
+
+    if (!player.invisible && Collision.testCircleCircle(player, this)) {
+      player.damage();
+      this.remove();
+    }
   },
 });
 
@@ -129,7 +156,9 @@ phina.define("DirectionalShooter", {
   },
 
   update: function (app) {
-    Bullet(0, 0, this.shot_angle, 0, this.shot_speed, 0).addChildTo(this);
+    Bullet(this.x, this.y, this.shot_angle, 0, this.shot_speed, 0).addChildTo(
+      this.parent
+    );
   },
 });
 
