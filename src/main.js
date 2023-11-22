@@ -133,9 +133,9 @@ phina.define("Enemy", {
 phina.define("Bullet", {
   superClass: "Sprite",
   // angle(0.0: right, 0.25: down, 0.5: left, 0.75: up, 1.0: right)
-  init: function (x, y, angle, angleRate, speed, speedRate) {
+  init: function (frameIndex, x, y, angle, angleRate, speed, speedRate) {
     this.superInit("bullet", 32);
-    this.frameIndex = 0;
+    this.frameIndex = frameIndex;
 
     this.setPosition(x, y);
     this.rotation = angle;
@@ -172,7 +172,7 @@ phina.define("DirectionalShooter", {
   },
 
   update: function (app) {
-    Bullet(this.x, this.y, this.shotAngle, 0, this.shotSpeed, 0).addChildTo(
+    Bullet(0, this.x, this.y, this.shotAngle, 0, this.shotSpeed, 0).addChildTo(
       this.parent
     );
   },
