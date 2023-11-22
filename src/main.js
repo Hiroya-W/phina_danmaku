@@ -120,22 +120,22 @@ phina.define("Enemy", {
 phina.define("Bullet", {
   superClass: "Sprite",
   // angle(0.0: right, 0.25: down, 0.5: left, 0.75: up, 1.0: right)
-  init: function (x, y, angle, angle_rate, speed, speed_rate) {
+  init: function (x, y, angle, angleRate, speed, speedRate) {
     this.superInit("bullet");
 
     this.setPosition(x, y);
     this.rotation = angle;
-    this.angle_rate = angle_rate;
+    this.angleRate = angleRate;
     this.speed = speed;
-    this.speed_rate = speed_rate;
+    this.speedRate = speedRate;
   },
 
   update: function (app) {
     let rad = this.rotation * Math.PI * 2;
     this.x += this.speed * Math.cos(rad);
     this.y += this.speed * Math.sin(rad);
-    this.rotation += this.angle_rate;
-    this.speed += this.speed_rate;
+    this.rotation += this.angleRate;
+    this.speed += this.speedRate;
 
     if (!player.invisible && Collision.testCircleCircle(player, this)) {
       player.damage();
@@ -150,13 +150,13 @@ phina.define("DirectionalShooter", {
     this.superInit();
 
     // 発射角度
-    this.shot_angle = angle;
+    this.shotAngle = angle;
     // 発射速度
-    this.shot_speed = speed;
+    this.shotSpeed = speed;
   },
 
   update: function (app) {
-    Bullet(this.x, this.y, this.shot_angle, 0, this.shot_speed, 0).addChildTo(
+    Bullet(this.x, this.y, this.shotAngle, 0, this.shotSpeed, 0).addChildTo(
       this.parent
     );
   },
