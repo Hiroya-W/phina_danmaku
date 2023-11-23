@@ -42,8 +42,9 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
 
-    enemy = CombinedSpiralShooter(1, this)
+    enemy = CombinedSpiralShooter(0, this)
       .addChildTo(this)
+      .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
   },
 });
@@ -177,14 +178,12 @@ phina.define("CombinedSpiralShooter", {
 
     // パラメータは埋め込でしまったが、別に引数から渡せるようにしてもいい
     this.enemies = [
-      BiDirectionalSpiralShooter(0, 0, [0.015, -0.01], 7, 4, 7)
+      BiDirectionalSpiralShooter(1, 0, [0.015, -0.01], 7, 4, 7)
         .addChildTo(scene)
-        .setPosition(this.x, this.y)
-        .setScale(0.7, 0.7),
+        .setPosition(this.x, this.y),
       BentSpiralShooter(1, 1, 0.015, 3, 9, 15, -0.0015, 0.05)
         .addChildTo(scene)
         .setPosition(this.x, this.y)
-        .setScale(0.7, 0.7),
     ];
   },
 
