@@ -41,22 +41,10 @@ phina.define("MainScene", {
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
-    // 近い位置で軌道が変わるような弾幕
-    // this.enemy = BentSpiralShooter(0, 0.015, 7, 1, 7, -0.003, 0)
-    //   .addChildTo(this)
-    //   .setPosition(this.gridX.center(), this.gridY.span(3))
-    //   .setScale(0.7, 0.7);
-    // 徐々に加速してくる弾幕
-    // this.enemy = BentSpiralShooter(1, 0.015, 7, 1, 7, 0, 0.1)
-    //   .addChildTo(this)
-    //   .setPosition(this.gridX.center(), this.gridY.span(3))
-    //   .setScale(0.7, 0.7);
 
-    // 合わせてみれば
-    this.enemy = BentSpiralShooter(1, 0.015, 7, 1, 7, -0.003, 0.1)
+    enemy = CombinedSpiralShooter(1, this)
       .addChildTo(this)
-      .setPosition(this.gridX.center(), this.gridY.span(3))
-      .setScale(0.7, 0.7);
+      .setPosition(this.gridX.center(), this.gridY.span(3));
   },
 });
 
@@ -182,9 +170,77 @@ phina.define("Bullet", {
   },
 });
 
+phina.define("CombinedSpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, scene) {
+    this.superInit(frameIndex);
+
+    // パラメータは埋め込でしまったが、別に引数から渡せるようにしてもいい
+    this.enemies = [
+      BiDirectionalSpiralShooter(0, 0, [0.015, -0.01], 7, 4, 7)
+        .addChildTo(scene)
+        .setPosition(this.x, this.y)
+        .setScale(0.7, 0.7),
+      BentSpiralShooter(1, 1, 0.015, 3, 9, 15, -0.0015, 0.05)
+        .addChildTo(scene)
+        .setPosition(this.x, this.y)
+        .setScale(0.7, 0.7),
+    ];
+  },
+
+  setPosition: function (x, y) {
+    this.superMethod("setPosition", x, y);
+    this.enemies.forEach((element) => {
+      element.setPosition(x, y);
+    });
+  },
+});
+
+phina.define("BiDirectionalSpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, angle, angleRate, speed, count, interval) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = [angle, angle];
+    // 発射角速度
+    this.shotAngleRate = angleRate;
+    // 発射速度
+    this.shotSpeed = speed;
+    // 発射数
+    this.shotCount = count;
+    // 発射間隔
+    this.interval = interval;
+    this.time = 0;
+  },
+
+  update: function (app) {
+    if (this.time == 0) {
+      for (let j = 0; j < 2; j++) {
+        for (let i = 0; i < this.shotCount; i++) {
+          Bullet(
+            0,
+            this.x,
+            this.y,
+            this.shotAngle[j] + i / this.shotCount,
+            0,
+            this.shotSpeed,
+            0
+          ).addChildTo(this.parent);
+        }
+        this.shotAngle[j] += this.shotAngleRate[j];
+        // 0~1に収める
+        this.shotAngle[j] -= Math.floor(this.shotAngle[j]);
+      }
+    }
+    this.time = (this.time + 1) % this.interval;
+  },
+});
+
 phina.define("BentSpiralShooter", {
   superClass: "Enemy",
   init: function (
+    frameIndex,
     angle,
     angleRate,
     speed,
@@ -193,7 +249,7 @@ phina.define("BentSpiralShooter", {
     bulletAngleRate,
     bulletSpeedRate
   ) {
-    this.superInit(0);
+    this.superInit(frameIndex);
 
     // 発射角度
     this.shotAngle = angle;
@@ -216,7 +272,7 @@ phina.define("BentSpiralShooter", {
     if (this.time == 0) {
       for (let i = 0; i < this.shotCount; i++) {
         Bullet(
-          0,
+          1,
           this.x,
           this.y,
           this.shotAngle + i / this.shotCount,
