@@ -42,7 +42,7 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
 
-    enemy = CombinedSpiralShooter(0, this)
+    enemy = WasherSpiralShooter(0, this, 0.02, 0.0015)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
@@ -171,20 +171,31 @@ phina.define("Bullet", {
   },
 });
 
-phina.define("CombinedSpiralShooter", {
+phina.define("WasherSpiralShooter", {
   superClass: "Enemy",
-  init: function (frameIndex, scene) {
+  init: function (frameIndex, scene, maxShotAngleRate, maxBulletAngleRate) {
     this.superInit(frameIndex);
 
+    this.maxShotAngleRate = maxShotAngleRate;
+    this.maxBulletAngleRate = maxBulletAngleRate;
+
+    this.biDirectinal = BiDirectionalSpiralShooter(
+      1,
+      0,
+      [0.015, -0.01],
+      7,
+      4,
+      7
+    )
+      .addChildTo(scene)
+      .setPosition(this.x, this.y);
+
+    this.bent = BentSpiralShooter(1, 0, 0, 3, 9, 10, 0, 0.05)
+      .addChildTo(scene)
+      .setPosition(this.x, this.y);
+
     // パラメータは埋め込でしまったが、別に引数から渡せるようにしてもいい
-    this.enemies = [
-      BiDirectionalSpiralShooter(1, 0, [0.015, -0.01], 7, 4, 7)
-        .addChildTo(scene)
-        .setPosition(this.x, this.y),
-      BentSpiralShooter(1, 1, 0.015, 3, 9, 15, -0.0015, 0.05)
-        .addChildTo(scene)
-        .setPosition(this.x, this.y)
-    ];
+    this.enemies = [this.biDirectinal, this.bent];
   },
 
   setPosition: function (x, y) {
@@ -192,6 +203,31 @@ phina.define("CombinedSpiralShooter", {
     this.enemies.forEach((element) => {
       element.setPosition(x, y);
     });
+  },
+
+  update: function (app) {
+    let time = app.frame % 600;
+
+    // 右巻き
+    if (time < 250) {
+      this.bent.shotAngleRate = this.maxShotAngleRate;
+      this.bent.bulletAngleRate = -this.maxBulletAngleRate;
+    }
+    // 右巻きから左巻きへなめらかに変化させる
+    else if (time < 300) {
+      this.bent.shotAngleRate = (this.maxShotAngleRate * (275 - time)) / 25;
+      this.bent.bulletAngleRate = (this.maxBulletAngleRate * (275 - time)) / 25;
+    }
+    // 左巻き
+    else if (time < 550) {
+      this.bent.shotAngleRate = -this.maxShotAngleRate;
+      this.bent.bulletAngleRate = this.maxBulletAngleRate;
+    }
+    // 左巻きから右巻きへなめらかに変化させる
+    else {
+      this.bent.shotAngleRate = (-this.maxShotAngleRate * (575 - time)) / 25;
+      this.bent.bulletAngleRate = (this.maxBulletAngleRate * (575 - time)) / 25;
+    }
   },
 });
 
