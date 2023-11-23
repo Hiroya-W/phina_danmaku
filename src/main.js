@@ -17,7 +17,7 @@ let ASSETS = {
     player:
       "https://raw.githubusercontent.com/phinajs/phina.js/develop/assets/images/shooting/player.png",
     enemy:
-      "https://raw.githubusercontent.com/phinajs/phina.js/develop/assets/images/shooting/enemy.png",
+      "https://raw.githubusercontent.com/Hiroya-W/phina.js/assets/assets/images/shooting/enemies.png",
     bullet:
       "https://raw.githubusercontent.com/Hiroya-W/phina.js/assets/assets/images/shooting/bullets.png",
   },
@@ -138,8 +138,9 @@ phina.define("Player", {
 
 phina.define("Enemy", {
   superClass: "Sprite",
-  init: function () {
-    this.superInit("enemy");
+  init: function (frameIndex = 0) {
+    this.superInit("enemy", 64);
+    this.frameIndex = frameIndex;
   },
 });
 
@@ -192,7 +193,7 @@ phina.define("BentSpiralShooter", {
     bulletAngleRate,
     bulletSpeedRate
   ) {
-    this.superInit();
+    this.superInit(0);
 
     // 発射角度
     this.shotAngle = angle;
