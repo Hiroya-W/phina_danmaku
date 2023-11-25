@@ -50,10 +50,17 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
 
+    // 方向弾
+    DirectionalShooter(BULLET_TYPE.PINK, 0.25, 20)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(1))
+      .setScale(0.7, 0.7);
+    /*
     WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
+    */
   },
 });
 
@@ -177,6 +184,31 @@ phina.define("Bullet", {
     if (this.y + 16 < 0 || SCREEN_PROPS.height + 16 < this.y) {
       this.remove();
     }
+  },
+});
+
+// 方向弾
+phina.define("DirectionalShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, angle, speed) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = angle;
+    // 発射速度
+    this.shotSpeed = speed;
+  },
+
+  update: function (app) {
+    Bullet(
+      BULLET_TYPE.PINK,
+      this.x,
+      this.y,
+      this.shotAngle,
+      0,
+      this.shotSpeed,
+      0
+    ).addChildTo(this.parent);
   },
 });
 
