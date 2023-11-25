@@ -543,47 +543,6 @@ phina.define("WasherSpiralShooter", {
   },
 });
 
-phina.define("BiDirectionalSpiralShooter", {
-  superClass: "Enemy",
-  init: function (frameIndex, angle, angleRate, speed, count, interval) {
-    this.superInit(frameIndex);
-
-    // 発射角度
-    this.shotAngle = [angle, angle];
-    // 発射角速度
-    this.shotAngleRate = angleRate;
-    // 発射速度
-    this.shotSpeed = speed;
-    // 発射数
-    this.shotCount = count;
-    // 発射間隔
-    this.interval = interval;
-    this.time = 0;
-  },
-
-  update: function (app) {
-    if (this.time == 0) {
-      for (let j = 0; j < 2; j++) {
-        for (let i = 0; i < this.shotCount; i++) {
-          Bullet(
-            BULLET_TYPE.PINK,
-            this.x,
-            this.y,
-            this.shotAngle[j] + i / this.shotCount,
-            0,
-            this.shotSpeed,
-            0
-          ).addChildTo(this.parent);
-        }
-        this.shotAngle[j] += this.shotAngleRate[j];
-        // 0~1に収める
-        this.shotAngle[j] -= Math.floor(this.shotAngle[j]);
-      }
-    }
-    this.time = (this.time + 1) % this.interval;
-  },
-});
-
 /*
  * メイン処理
  */
