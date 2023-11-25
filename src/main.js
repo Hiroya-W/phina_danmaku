@@ -118,11 +118,19 @@ phina.define("MainScene", {
       .setScale(0.7, 0.7);
     */
     // 旋回 + 加速
+    /*
     BentSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.015, 7, 1, 7, -0.003, 0.1)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
-    
+    */
+
+    // 両回転渦巻弾 + 旋回加速渦巻弾
+    CombinedSpiralShooter(ENEMY_TYPE.DEFAULT, this)
+      .addChildTo(this)
+      .setScale(0.7, 0.7)
+      .setPosition(this.gridX.center(), this.gridY.span(3));
+   
     /*
     WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
@@ -471,6 +479,46 @@ phina.define("BentSpiralShooter", {
       // 0~1に収める
       this.shotAngle -= Math.floor(this.shotAngle);
     }
+  },
+});
+
+phina.define("CombinedSpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, scene) {
+    this.superInit(frameIndex);
+
+    // パラメータは埋め込でしまったが、別に引数から渡せるようにしてもいい
+    this.enemies = [
+      BiDirectionalSpiralShooter(
+        ENEMY_TYPE.TRANSPARENT,
+        0,
+        [0.015, -0.01],
+        7,
+        4,
+        7
+      )
+        .addChildTo(scene)
+        .setPosition(this.x, this.y),
+      BentSpiralShooter(
+        ENEMY_TYPE.TRANSPARENT,
+        1,
+        0.015,
+        3,
+        9,
+        15,
+        -0.0015,
+        0.05
+      )
+        .addChildTo(scene)
+        .setPosition(this.x, this.y),
+    ];
+  },
+
+  setPosition: function (x, y) {
+    this.superMethod("setPosition", x, y);
+    this.enemies.forEach((element) => {
+      element.setPosition(x, y);
+    });
   },
 });
 
