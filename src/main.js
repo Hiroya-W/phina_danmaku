@@ -59,7 +59,21 @@ phina.define("MainScene", {
     */
 
     // 渦巻弾
+    /*
     SpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.03, 10)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+    */
+
+    // 多方向渦巻弾
+    /*
+    MultipleSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.015, 10, 4)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+    */
+    IntervalMultipleSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.03, 10, 4, 7)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
@@ -248,7 +262,79 @@ phina.define("SpiralShooter", {
     this.shotAngle += this.shotAngleRate;
     // 0~1に収める
     this.shotAngle -= Math.floor(this.shotAngle);
-    console.log(this.shotAngle)
+    console.log(this.shotAngle);
+  },
+});
+
+// 多方向渦巻弾
+phina.define("MultipleSpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, angle, angleRate, speed, count) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = angle;
+    // 発射角速度
+    this.shotAngleRate = angleRate;
+    // 発射速度
+    this.shotSpeed = speed;
+    // 発射数
+    this.shotCount = count;
+  },
+
+  update: function (app) {
+    for (let i = 0; i < this.shotCount; i++) {
+      Bullet(
+        BULLET_TYPE.PINK,
+        this.x,
+        this.y,
+        this.shotAngle + i / this.shotCount,
+        0,
+        this.shotSpeed,
+        0
+      ).addChildTo(this.parent);
+    }
+    this.shotAngle += this.shotAngleRate;
+    // 0~1に収める
+    this.shotAngle -= Math.floor(this.shotAngle);
+  },
+});
+
+// 発射間隔を調整できるようにした多方向渦巻弾
+phina.define("IntervalMultipleSpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, angle, angleRate, speed, count, interval) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = angle;
+    // 発射角速度
+    this.shotAngleRate = angleRate;
+    // 発射速度
+    this.shotSpeed = speed;
+    // 発射数
+    this.shotCount = count;
+    // 発射間隔
+    this.interval = interval;
+  },
+
+  update: function (app) {
+    if (app.frame % this.interval === 0) {
+      for (let i = 0; i < this.shotCount; i++) {
+        Bullet(
+          BULLET_TYPE.PINK,
+          this.x,
+          this.y,
+          this.shotAngle + i / this.shotCount,
+          0,
+          this.shotSpeed,
+          0
+        ).addChildTo(this.parent);
+      }
+      this.shotAngle += this.shotAngleRate;
+      // 0~1に収める
+      this.shotAngle -= Math.floor(this.shotAngle);
+    }
   },
 });
 
