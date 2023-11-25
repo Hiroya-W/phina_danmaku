@@ -69,16 +69,16 @@ phina.define("Player", {
       fill: "blue",
     }).addChildTo(this);
 
-    this.invisible = false;
+    this.isInvisible = false;
     // ダメージを受けた時、一時的に当たり判定をなくす
     this.damage = function () {
-      this.invisible = true;
+      this.isInvisible = true;
       this.tweener
         .clear()
         .wait(1000)
         .call(
           function () {
-            this.invisible = false;
+            this.isInvisible = false;
           }.bind(this)
         );
     };
@@ -125,7 +125,7 @@ phina.define("Player", {
     }
 
     // ダメージを受けた時の点滅
-    if (this.invisible) {
+    if (this.isInvisible) {
       this.alpha = this.alpha === 0 ? 1 : 0;
     } else {
       this.alpha = 1;
@@ -164,7 +164,7 @@ phina.define("Bullet", {
 
     // プレイヤーの位置に円の判定を配置して、弾と当たっているかを判定する
     const circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
-    if (!player.invisible && Collision.testCircleCircle(circle, this)) {
+    if (!player.isInvisible && Collision.testCircleCircle(circle, this)) {
       player.damage();
       this.remove();
     }
