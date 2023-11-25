@@ -1,24 +1,24 @@
 phina.globalize();
 
-let SCREEN_PROPS = {
+const SCREEN_PROPS = {
   width: 640,
   height: 960,
   fps: 60,
 };
-let PLAYER_PROPS = {
+const PLAYER_PROPS = {
   speed: 10,
   hitboxRadius: 7,
 };
-let ENEMY_TYPE = {
+const ENEMY_TYPE = {
   DEFAULT: 0,
   TRANSPARENT: 1,
 };
-let BULLET_TYPE = {
+const BULLET_TYPE = {
   PINK: 0,
   BLUE: 1,
 }
 
-let ASSETS = {
+const ASSETS = {
   image: {
     background:
       "https://raw.githubusercontent.com/phinajs/phina.js/develop/assets/images/shooting/bg.png",
@@ -31,7 +31,7 @@ let ASSETS = {
   },
 };
 
-var player;
+let player;
 
 /*
  * メインシーン
@@ -85,14 +85,14 @@ phina.define("Player", {
   },
 
   update: function (app) {
-    var key = app.keyboard;
+    const key = app.keyboard;
 
-    var current = {
+    const current = {
       x: this.x,
       y: this.y,
     };
 
-    let SPEED = key.getKey("shift")
+    const SPEED = key.getKey("shift")
       ? PLAYER_PROPS.speed / 2
       : PLAYER_PROPS.speed;
 
@@ -156,14 +156,14 @@ phina.define("Bullet", {
   },
 
   update: function (app) {
-    let rad = this.rotation * Math.PI * 2;
+    const rad = this.rotation * Math.PI * 2;
     this.x += this.speed * Math.cos(rad);
     this.y += this.speed * Math.sin(rad);
     this.rotation += this.angleRate;
     this.speed += this.speedRate;
 
     // プレイヤーの位置に円の判定を配置して、弾と当たっているかを判定する
-    let circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
+    const circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
     if (!player.invisible && Collision.testCircleCircle(circle, this)) {
       player.damage();
       this.remove();
@@ -214,7 +214,7 @@ phina.define("WasherSpiralShooter", {
   },
 
   update: function (app) {
-    let time = app.frame % 600;
+    const time = app.frame % 600;
 
     // 右巻き
     if (time < 250) {
