@@ -51,10 +51,19 @@ phina.define("MainScene", {
       .setScale(0.7, 0.7);
 
     // 方向弾
+    /*
     DirectionalShooter(BULLET_TYPE.PINK, 0.25, 20)
       .addChildTo(this)
-      .setPosition(this.gridX.center(), this.gridY.span(1))
+      .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
+    */
+
+    // 渦巻弾
+    SpiralShooter(BULLET_TYPE.PINK, 0, 0.03, 10)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+
     /*
     WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
@@ -209,6 +218,37 @@ phina.define("DirectionalShooter", {
       this.shotSpeed,
       0
     ).addChildTo(this.parent);
+  },
+});
+
+// 渦巻弾
+phina.define("SpiralShooter", {
+  superClass: "Enemy",
+  init: function (frameIndex, angle, angleRate, speed) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = angle;
+    // 発射角速度
+    this.shotAngleRate = angleRate;
+    // 発射速度
+    this.shotSpeed = speed;
+  },
+
+  update: function (app) {
+    Bullet(
+      BULLET_TYPE.PINK,
+      this.x,
+      this.y,
+      this.shotAngle,
+      0,
+      this.shotSpeed,
+      0
+    ).addChildTo(this.parent);
+    this.shotAngle += this.shotAngleRate;
+    // 0~1に収める
+    this.shotAngle -= Math.floor(this.shotAngle);
+    console.log(this.shotAngle)
   },
 });
 
