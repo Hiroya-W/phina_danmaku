@@ -148,19 +148,19 @@ phina.define("Bullet", {
     this.superInit("bullet", 32);
     this.frameIndex = frameIndex;
 
-    this.setPosition(x, y);
-    this.rotation = angle;
-    this.angleRate = angleRate;
-    this.speed = speed;
-    this.speedRate = speedRate;
+    this.setPosition(x, y);     // 初期位置
+    this.rotation = angle;      // 発射角度(0.0 ~ 1.0)
+    this.angleRate = angleRate; // 弾の進行方向の変化量
+    this.speed = speed;         // 弾の初速
+    this.speedRate = speedRate; // 弾の加速度
   },
 
   update: function (app) {
     const rad = this.rotation * Math.PI * 2;
-    this.x += this.speed * Math.cos(rad);
+    this.x += this.speed * Math.cos(rad);    // 移動方向
     this.y += this.speed * Math.sin(rad);
-    this.rotation += this.angleRate;
-    this.speed += this.speedRate;
+    this.rotation += this.angleRate;         // 弾の進行方向を変化
+    this.speed += this.speedRate;            // 弾の速さを変化
 
     // プレイヤーの位置に円の判定を配置して、弾と当たっているかを判定する
     const circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
