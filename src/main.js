@@ -70,18 +70,19 @@ phina.define("Player", {
     }).addChildTo(this);
 
     this.isInvisible = false;
+  },
+
+  damage: function () {
     // ダメージを受けた時、一時的に当たり判定をなくす
-    this.damage = function () {
-      this.isInvisible = true;
-      this.tweener
-        .clear()
-        .wait(1000)
-        .call(
-          function () {
-            this.isInvisible = false;
-          }.bind(this)
-        );
-    };
+    this.isInvisible = true;
+    this.tweener
+      .clear()
+      .wait(1000)
+      .call(
+        function () {
+          this.isInvisible = false;
+        }.bind(this)
+      );
   },
 
   update: function (app) {
@@ -148,19 +149,19 @@ phina.define("Bullet", {
     this.superInit("bullet", 32);
     this.frameIndex = frameIndex;
 
-    this.setPosition(x, y);     // 初期位置
-    this.rotation = angle;      // 発射角度(0.0 ~ 1.0)
+    this.setPosition(x, y); // 初期位置
+    this.rotation = angle; // 発射角度(0.0 ~ 1.0)
     this.angleRate = angleRate; // 弾の進行方向の変化量
-    this.speed = speed;         // 弾の初速
+    this.speed = speed; // 弾の初速
     this.speedRate = speedRate; // 弾の加速度
   },
 
   update: function (app) {
     const rad = this.rotation * Math.PI * 2;
-    this.x += this.speed * Math.cos(rad);    // 移動方向
+    this.x += this.speed * Math.cos(rad); // 移動方向
     this.y += this.speed * Math.sin(rad);
-    this.rotation += this.angleRate;         // 弾の進行方向を変化
-    this.speed += this.speedRate;            // 弾の速さを変化
+    this.rotation += this.angleRate; // 弾の進行方向を変化
+    this.speed += this.speedRate; // 弾の速さを変化
 
     // プレイヤーの位置に円の判定を配置して、弾と当たっているかを判定する
     const circle = Circle(player.x, player.y, PLAYER_PROPS.hitboxRadius);
