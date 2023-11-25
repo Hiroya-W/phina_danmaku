@@ -95,11 +95,34 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
     */
+    /*
     BiDirectionalSpiralShooter(ENEMY_TYPE.DEFAULT, 0, [0.015, -0.01], 7, 4, 7)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
+    */
 
+    // 旋回加速渦巻弾
+    // 近い位置で軌道が変わるような弾幕
+    /*
+    BentSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.015, 7, 1, 7, -0.003, 0)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+    */
+    // 徐々に加速してくる弾幕
+    /*
+    BentSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.015, 7, 1, 7, 0, 0.1)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+    */
+    // 旋回 + 加速
+    BentSpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.015, 7, 1, 7, -0.003, 0.1)
+      .addChildTo(this)
+      .setPosition(this.gridX.center(), this.gridY.span(3))
+      .setScale(0.7, 0.7);
+    
     /*
     WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
@@ -400,6 +423,57 @@ phina.define("BiDirectionalSpiralShooter", {
   },
 });
 
+// 旋回加速渦巻弾
+phina.define("BentSpiralShooter", {
+  superClass: "Enemy",
+  init: function (
+    frameIndex,
+    angle,
+    angleRate,
+    speed,
+    count,
+    interval,
+    bulletAngleRate,
+    bulletSpeedRate
+  ) {
+    this.superInit(frameIndex);
+
+    // 発射角度
+    this.shotAngle = angle;
+    // 発射角速度
+    this.shotAngleRate = angleRate;
+    // 発射速度
+    this.shotSpeed = speed;
+    // 発射数
+    this.shotCount = count;
+    // 発射間隔
+    this.interval = interval;
+    // 弾の角速度
+    this.bulletAngleRate = bulletAngleRate;
+    // 弾の加速度
+    this.bulletSpeedRate = bulletSpeedRate;
+  },
+
+  update: function (app) {
+    if (app.frame % this.interval === 0) {
+      for (let i = 0; i < this.shotCount; i++) {
+        Bullet(
+          BULLET_TYPE.BLUE,
+          this.x,
+          this.y,
+          this.shotAngle + i / this.shotCount,
+          this.bulletAngleRate,
+          this.shotSpeed,
+          this.bulletSpeedRate
+        ).addChildTo(this.parent);
+      }
+      this.shotAngle += this.shotAngleRate;
+      // 0~1に収める
+      this.shotAngle -= Math.floor(this.shotAngle);
+    }
+  },
+});
+
 phina.define("WasherSpiralShooter", {
   superClass: "Enemy",
   init: function (frameIndex, scene, maxShotAngleRate, maxBulletAngleRate) {
@@ -505,58 +579,6 @@ phina.define("BiDirectionalSpiralShooter", {
         // 0~1に収める
         this.shotAngle[j] -= Math.floor(this.shotAngle[j]);
       }
-    }
-    this.time = (this.time + 1) % this.interval;
-  },
-});
-
-phina.define("BentSpiralShooter", {
-  superClass: "Enemy",
-  init: function (
-    frameIndex,
-    angle,
-    angleRate,
-    speed,
-    count,
-    interval,
-    bulletAngleRate,
-    bulletSpeedRate
-  ) {
-    this.superInit(frameIndex);
-
-    // 発射角度
-    this.shotAngle = angle;
-    // 発射角速度
-    this.shotAngleRate = angleRate;
-    // 発射速度
-    this.shotSpeed = speed;
-    // 発射数
-    this.shotCount = count;
-    // 発射間隔
-    this.interval = interval;
-    this.time = 0;
-    // 弾の角速度
-    this.bulletAngleRate = bulletAngleRate;
-    // 弾の加速度
-    this.bulletSpeedRate = bulletSpeedRate;
-  },
-
-  update: function (app) {
-    if (this.time == 0) {
-      for (let i = 0; i < this.shotCount; i++) {
-        Bullet(
-          BULLET_TYPE.BLUE,
-          this.x,
-          this.y,
-          this.shotAngle + i / this.shotCount,
-          this.bulletAngleRate,
-          this.shotSpeed,
-          this.bulletSpeedRate
-        ).addChildTo(this.parent);
-      }
-      this.shotAngle += this.shotAngleRate;
-      // 0~1に収める
-      this.shotAngle -= Math.floor(this.shotAngle);
     }
     this.time = (this.time + 1) % this.interval;
   },
