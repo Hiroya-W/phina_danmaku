@@ -9,6 +9,14 @@ let PLAYER_PROPS = {
   speed: 10,
   hitboxRadius: 7,
 };
+let ENEMY_TYPE = {
+  DEFAULT: 0,
+  TRANSPARENT: 1,
+};
+let BULLET_TYPE = {
+  PINK: 0,
+  BLUE: 1,
+}
 
 let ASSETS = {
   image: {
@@ -42,7 +50,7 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
 
-    enemy = WasherSpiralShooter(0, this, 0.02, 0.0015)
+    enemy = WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
@@ -127,7 +135,7 @@ phina.define("Player", {
 
 phina.define("Enemy", {
   superClass: "Sprite",
-  init: function (frameIndex = 0) {
+  init: function (frameIndex = ENEMY_TYPE.DEFAULT) {
     this.superInit("enemy", 64);
     this.frameIndex = frameIndex;
   },
@@ -180,7 +188,7 @@ phina.define("WasherSpiralShooter", {
     this.maxBulletAngleRate = maxBulletAngleRate;
 
     this.biDirectinal = BiDirectionalSpiralShooter(
-      1,
+      ENEMY_TYPE.TRANSPARENT,
       0,
       [0.015, -0.01],
       7,
@@ -190,7 +198,7 @@ phina.define("WasherSpiralShooter", {
       .addChildTo(scene)
       .setPosition(this.x, this.y);
 
-    this.bent = BentSpiralShooter(1, 0, 0, 3, 9, 10, 0, 0.05)
+    this.bent = BentSpiralShooter(ENEMY_TYPE.TRANSPARENT, 0, 0, 3, 9, 10, 0, 0.05)
       .addChildTo(scene)
       .setPosition(this.x, this.y);
 
@@ -254,7 +262,7 @@ phina.define("BiDirectionalSpiralShooter", {
       for (let j = 0; j < 2; j++) {
         for (let i = 0; i < this.shotCount; i++) {
           Bullet(
-            0,
+            BULLET_TYPE.PINK,
             this.x,
             this.y,
             this.shotAngle[j] + i / this.shotCount,
@@ -307,7 +315,7 @@ phina.define("BentSpiralShooter", {
     if (this.time == 0) {
       for (let i = 0; i < this.shotCount; i++) {
         Bullet(
-          1,
+          BULLET_TYPE.BLUE,
           this.x,
           this.y,
           this.shotAngle + i / this.shotCount,
