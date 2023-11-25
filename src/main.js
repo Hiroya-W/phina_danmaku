@@ -126,17 +126,17 @@ phina.define("MainScene", {
     */
 
     // 両回転渦巻弾 + 旋回加速渦巻弾
+    /*
     CombinedSpiralShooter(ENEMY_TYPE.DEFAULT, this)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
-   
-    /*
+    */
+    // 洗濯機渦巻弾
     WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
-    */
   },
 });
 
