@@ -16,7 +16,7 @@ const ENEMY_TYPE = {
 const BULLET_TYPE = {
   PINK: 0,
   BLUE: 1,
-}
+};
 
 const ASSETS = {
   image: {
@@ -198,7 +198,16 @@ phina.define("WasherSpiralShooter", {
       .addChildTo(scene)
       .setPosition(this.x, this.y);
 
-    this.bent = BentSpiralShooter(ENEMY_TYPE.TRANSPARENT, 0, 0, 3, 9, 10, 0, 0.05)
+    this.bent = BentSpiralShooter(
+      ENEMY_TYPE.TRANSPARENT,
+      0,
+      0,
+      3,
+      9,
+      10,
+      0,
+      0.05
+    )
       .addChildTo(scene)
       .setPosition(this.x, this.y);
 
