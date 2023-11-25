@@ -52,14 +52,14 @@ phina.define("MainScene", {
 
     // 方向弾
     /*
-    DirectionalShooter(BULLET_TYPE.PINK, 0.25, 20)
+    DirectionalShooter(ENEMY_TYPE.DEFAULT, 0.25, 20)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
     */
 
     // 渦巻弾
-    SpiralShooter(BULLET_TYPE.PINK, 0, 0.03, 10)
+    SpiralShooter(ENEMY_TYPE.DEFAULT, 0, 0.03, 10)
       .addChildTo(this)
       .setPosition(this.gridX.center(), this.gridY.span(3))
       .setScale(0.7, 0.7);
