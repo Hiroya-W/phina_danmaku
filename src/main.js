@@ -50,7 +50,7 @@ phina.define("MainScene", {
       .setPosition(this.gridX.center(), this.gridY.span(13))
       .setScale(0.7, 0.7);
 
-    enemy = WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
+    WasherSpiralShooter(ENEMY_TYPE.DEFAULT, this, 0.02, 0.0015)
       .addChildTo(this)
       .setScale(0.7, 0.7)
       .setPosition(this.gridX.center(), this.gridY.span(3));
